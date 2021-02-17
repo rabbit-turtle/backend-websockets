@@ -1,0 +1,72 @@
+service: rabbit-turtle-realtime
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: ap-northeast-2
+  environment:
+    tableName: ${self:custom.tableName}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource: '*'
+
+custom:
+  tableName: WebsocketSessions
+
+functions:
+  websocket-connect:
+    handler: lambdas/connect.handler
+    events:
+      - websocket:
+          route: $connect
+  websocket-disconnect:
+    handler: lambdas/disconnect.handler
+    events:
+      - websocket:
+          route: $disconnect
+  websocket-default:
+    handler: lambdas/default.handler
+    events:
+      - websocket:
+          route: $default
+  websocket-enter-room:
+    handler: lambdas/enterRoom.handler
+    events:
+      - websocket:
+          route: enterRoom
+  websocket-leave-room:
+    handler: lambdas/leaveRoom.handler
+    events:
+      - websocket:
+          route: leaveRoom
+  websocket-send-message:
+    handler: lambdas/sendMessage.handler
+    events:
+      - websocket:
+          route: sendMessage
+
+resources:
+  Resources:
+    WeboscketUserTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.tableName}
+        AttributeDefinitions:
+          - AttributeName: ROOM_ID
+            AttributeType: S
+          - AttributeName: connectionId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: ROOM_ID
+            KeyType: HASH
+          - AttributeName: connectionId
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
