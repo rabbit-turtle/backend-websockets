@@ -53,6 +53,6 @@
 {
   "ROOM_ID": $string
   "message": $string
-  "action": "enterRoom"
+  "action": "sendMessage"
 }
 ```
