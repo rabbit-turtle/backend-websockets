@@ -13,8 +13,11 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayEvent) =>
       TableName: process.env.tableName as string,
     })
 
-    return Responses._200({ message: `left the room ${ROOM_ID}`, connectedAt, connectionId })
+    return Responses({
+      statusCode: 200,
+      body: { message: `left the room ${ROOM_ID}`, connectedAt, connectionId },
+    })
   } catch (err) {
-    return Responses._400({ message: 'there was an error leaving the room' })
+    return Responses({ statusCode: 400, body: { message: 'there was an error leaving the room' } })
   }
 }

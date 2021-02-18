@@ -9,12 +9,16 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayEvent) =>
   try {
     await Dynamo.write({
       ROOM_ID,
-      connectionId: connectionId as string,
       TableName: process.env.tableName as string,
+      connectionId: connectionId as string,
+      connectedAt: new Date(connectedAt as number).toISOString(),
     })
 
-    return Responses._200({ message: `entered the room ${ROOM_ID}`, connectedAt, connectionId })
+    return Responses({
+      statusCode: 200,
+      body: { message: `entered the room ${ROOM_ID}`, connectedAt, connectionId },
+    })
   } catch (err) {
-    return Responses._400({ message: 'there was an error entering the room' })
+    return Responses({ statusCode: 400, body: { message: 'there was an error entering the room' } })
   }
 }

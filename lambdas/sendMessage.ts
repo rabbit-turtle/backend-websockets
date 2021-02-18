@@ -22,9 +22,9 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayEvent) =>
       domainName: domainName as string,
     })
 
-    return Responses._200({ message: 'sent', connectedAt, connectionId })
+    return Responses({ statusCode: 200, body: { message: 'sent', connectedAt, connectionId } })
   } catch (err) {
     console.log(err)
-    return Responses._400({ message: 'sendMessage failed', connectedAt })
+    return Responses({ statusCode: 400, body: { message: 'sendMessage failed', connectedAt } })
   }
 }

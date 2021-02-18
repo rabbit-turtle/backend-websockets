@@ -58,11 +58,25 @@ resources:
             AttributeType: S
           - AttributeName: connectionId
             AttributeType: S
+          - AttributeName: connectedAt
+            AttributeType: S
         KeySchema:
           - AttributeName: ROOM_ID
             KeyType: HASH
           - AttributeName: connectionId
             KeyType: RANGE
+        GlobalSecondaryIndexes:
+          - IndexName: ConnectionIdIndex
+            KeySchema:
+              - AttributeName: connectionId
+                KeyType: HASH
+              - AttributeName: connectedAt
+                KeyType: RANGE
+            Projection:
+              ProjectionType: 'ALL'
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
         ProvisionedThroughput:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 5

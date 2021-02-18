@@ -5,6 +5,12 @@ const dynamoClient = new DynamoDB.DocumentClient()
 interface DynamoDefaultInfo {
   ROOM_ID: string
   TableName: string
+  connectedAt?: string
+}
+
+interface UserConnectionInfo {
+  TableName: string
+  connectionId: string
 }
 
 interface UserInput extends DynamoDefaultInfo {
@@ -14,6 +20,7 @@ interface UserInput extends DynamoDefaultInfo {
 interface UserSession {
   ROOM_ID: string
   connectionId: string
+  createdAt: string
 }
 
 export default class Dynamo {
@@ -40,10 +47,36 @@ export default class Dynamo {
     return queried.Items as UserSession[]
   }
 
-  static async write(writeInput: UserInput) {
-    const { ROOM_ID, TableName, connectionId } = writeInput
+  static async getUsersByClientId(connectionInfo: UserConnectionInfo) {
+    const { TableName, connectionId } = connectionInfo
 
-    const res = await dynamoClient.put({ TableName, Item: { ROOM_ID, connectionId } }).promise()
+    const quried = await dynamoClient
+      .query({
+        TableName,
+        IndexName: 'ConnectionIdIndex',
+        KeyConditionExpression: '#connectionId = :connectionId',
+        ExpressionAttributeNames: {
+          '#connectionId': 'connectionId',
+        },
+        ExpressionAttributeValues: {
+          ':connectionId': connectionId,
+        },
+      })
+      .promise()
+
+    if (!quried || !quried.Items?.length) {
+      throw Error('connectionId DOES NOT EXIST')
+    }
+
+    return quried.Items as UserSession[]
+  }
+
+  static async write(writeInput: UserInput) {
+    const { ROOM_ID, TableName, connectionId, connectedAt } = writeInput
+
+    const res = await dynamoClient
+      .put({ TableName, Item: { ROOM_ID, connectionId, connectedAt } })
+      .promise()
 
     if (!res) {
       throw Error(`Error occurred during writing ${ROOM_ID} in table ${TableName}`)
