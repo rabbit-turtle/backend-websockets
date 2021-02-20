@@ -2,6 +2,8 @@
 
 앱의 확장성을 고려해서 소켓통신을 위한 웹소켓 서버를 AWS Serverless 서비스를 사용해서 구현
 
+![rabbit_turtle_websockets_diagram](websockets.png)
+
 ## Technical Stacks
 
 - AWS API Gateway (Websocket API)
