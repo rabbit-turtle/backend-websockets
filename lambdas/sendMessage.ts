@@ -1,30 +1,25 @@
-import { APIGatewayProxyHandler, APIGatewayEvent } from 'aws-lambda'
-import Responses from './common/Responses'
+import { APIGatewayEvent } from 'aws-lambda'
 import Dynamo from './common/Dynamo'
 import SocketHandler from './common/SocketHandler'
+import { handlerWrapper } from './common/handlerWrapper'
 
-export const handler: APIGatewayProxyHandler = async (event: APIGatewayEvent) => {
+export const handler = handlerWrapper(async (event: APIGatewayEvent) => {
   const { connectedAt, connectionId, stage, domainName } = event.requestContext
   const { ROOM_ID, message } = JSON.parse(event.body as string)
 
-  try {
-    const users = await Dynamo.getUsersByRoomID({
-      ROOM_ID,
-      TableName: process.env.tableName as string,
-    })
+  const users = await Dynamo.getUsersByRoomID({
+    ROOM_ID,
+    TableName: process.env.tableName as string,
+  })
 
-    const [peerUser] = users.filter(({ connectionId: foundUserId }) => foundUserId !== connectionId)
+  const [peerUser] = users.filter(({ connectionId: foundUserId }) => foundUserId !== connectionId)
 
-    await SocketHandler.sendToClient({
-      message: message as string,
-      ConnectionId: peerUser.connectionId,
-      stage,
-      domainName: domainName as string,
-    })
+  await SocketHandler.sendToClient({
+    message: message as string,
+    ConnectionId: peerUser.connectionId,
+    stage,
+    domainName: domainName as string,
+  })
 
-    return Responses({ statusCode: 200, body: { message: 'sent', connectedAt, connectionId } })
-  } catch (err) {
-    console.log(err)
-    return Responses({ statusCode: 400, body: { message: 'sendMessage failed', connectedAt } })
-  }
-}
+  return { statusCode: 200, body: { message: 'sent', connectedAt, connectionId } }
+})

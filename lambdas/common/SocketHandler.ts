@@ -14,7 +14,7 @@ export default class SocketHandler {
     const endpoint = `${domainName}/${stage}`
     const apiGatewayManager = new ApiGatewayManagementApi({
       apiVersion: '2018-11-29',
-      endpoint: 'http://localhost:3001',
+      endpoint,
     })
 
     return apiGatewayManager.postToConnection({ Data: message, ConnectionId }).promise()
