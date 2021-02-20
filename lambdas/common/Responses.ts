@@ -1,4 +1,9 @@
-const Responses = ({ statusCode, body }: { statusCode: number; body: object }) => {
+export interface CustomResponse {
+  statusCode: number
+  body: string | object
+}
+
+export const Responses = ({ statusCode, body }: CustomResponse) => {
   return {
     headers: {
       'Content-Type': 'application/json',
@@ -9,5 +14,3 @@ const Responses = ({ statusCode, body }: { statusCode: number; body: object }) =
     body: JSON.stringify(body),
   }
 }
-
-export default Responses

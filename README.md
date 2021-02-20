@@ -54,7 +54,7 @@
 ```js
 {
   "ROOM_ID": $string
-  "message": $string
   "action": "sendMessage"
+  "message": $string
 }
 ```
