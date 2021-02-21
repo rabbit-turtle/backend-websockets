@@ -10,7 +10,7 @@ export const Responses = ({ statusCode, body }: CustomResponse) => {
       'Access-Control-Allow-Methods': '*',
       'Access-Control-Allow-Origin': '*',
     },
-    statusCode: statusCode,
+    statusCode,
     body: JSON.stringify(body),
   }
 }

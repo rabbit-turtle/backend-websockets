@@ -11,8 +11,6 @@ export const handler = handlerWrapper(async (event: APIGatewayEvent) => {
     TableName,
   })
 
-  console.log(sessions)
-
   await Promise.all(
     sessions.map(({ connectionId, ROOM_ID }) =>
       Dynamo.delete({

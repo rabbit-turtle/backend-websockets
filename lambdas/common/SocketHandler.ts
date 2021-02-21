@@ -4,7 +4,7 @@ interface SendToClientInput {
   domainName: string
   stage: string
   ConnectionId: string
-  message: string
+  message: string | object
 }
 
 export default class SocketHandler {
@@ -17,6 +17,8 @@ export default class SocketHandler {
       endpoint,
     })
 
-    return apiGatewayManager.postToConnection({ Data: message, ConnectionId }).promise()
+    return apiGatewayManager
+      .postToConnection({ Data: JSON.stringify(message), ConnectionId })
+      .promise()
   }
 }
