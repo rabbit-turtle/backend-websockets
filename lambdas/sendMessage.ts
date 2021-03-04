@@ -5,7 +5,7 @@ import { handlerWrapper } from './common/handlerWrapper'
 
 export const handler = handlerWrapper(async (event: APIGatewayEvent) => {
   const { connectedAt, connectionId, stage, domainName } = event.requestContext
-  const { ROOM_ID, message } = JSON.parse(event.body as string)
+  const { ROOM_ID, message, messageType } = JSON.parse(event.body as string)
 
   const users = await Dynamo.getUsersByRoomID({
     ROOM_ID,
@@ -15,10 +15,11 @@ export const handler = handlerWrapper(async (event: APIGatewayEvent) => {
   const [peerUser] = users.filter(({ connectionId: foundUserId }) => foundUserId !== connectionId)
 
   await SocketHandler.sendToClient({
-    message: message as string,
-    ConnectionId: peerUser.connectionId,
-    stage,
     domainName: domainName as string,
+    stage,
+    ConnectionId: peerUser.connectionId,
+    message,
+    messageType,
   })
 
   return { statusCode: 200, body: { message: 'sent', connectedAt, connectionId } }
