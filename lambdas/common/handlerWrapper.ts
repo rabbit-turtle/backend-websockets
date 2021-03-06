@@ -1,10 +1,4 @@
-import {
-  APIGatewayProxyHandler,
-  APIGatewayEvent,
-  Context,
-  Callback,
-  APIGatewayProxyResult,
-} from 'aws-lambda'
+import { APIGatewayProxyHandler, APIGatewayEvent, Context } from 'aws-lambda'
 import { Responses, CustomResponse } from './Responses'
 
 export type CustomLambdaHandler<TResult = CustomResponse> = (
@@ -13,8 +7,7 @@ export type CustomLambdaHandler<TResult = CustomResponse> = (
 
 export const handlerWrapper = (handler: CustomLambdaHandler): APIGatewayProxyHandler => async (
   event: APIGatewayEvent,
-  context: Context,
-  cb: Callback<APIGatewayProxyResult>
+  context: Context
 ) => {
   try {
     const { statusCode, body } = await handler(event)
