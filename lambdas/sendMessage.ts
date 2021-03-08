@@ -15,7 +15,7 @@ export const handler = handlerWrapper(async (event: APIGatewayEvent) => {
   const [peerUser] = users.filter(({ connectionId: foundUserId }) => foundUserId !== connectionId)
 
   await SocketHandler.sendToClient({
-    payload: { message, messageType, createdAt: new Date(connectedAt as number).toISOString() },
+    payload: { message, messageType, createdAt: new Date().toISOString() },
     ConnectionId: peerUser.connectionId,
     stage,
     domainName: domainName as string,
