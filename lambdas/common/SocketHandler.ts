@@ -4,12 +4,12 @@ interface SendToClientInput {
   domainName: string
   stage: string
   ConnectionId: string
-  message: string | object
+  payload: { message: string; messageType: string; createdAt: string }
 }
 
 export default class SocketHandler {
-  static sendToClient(input: SendToClientInput) {
-    const { domainName, stage, ConnectionId, message } = input
+  static sendToClient(sendToClientData: SendToClientInput) {
+    const { domainName, stage, ConnectionId, payload } = sendToClientData
 
     const endpoint = `${domainName}/${stage}`
     const apiGatewayManager = new ApiGatewayManagementApi({
@@ -18,7 +18,7 @@ export default class SocketHandler {
     })
 
     return apiGatewayManager
-      .postToConnection({ Data: JSON.stringify(message), ConnectionId })
+      .postToConnection({ Data: JSON.stringify(payload), ConnectionId })
       .promise()
   }
 }
