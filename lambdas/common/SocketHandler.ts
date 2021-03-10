@@ -4,7 +4,13 @@ interface SendToClientInput {
   domainName: string
   stage: string
   ConnectionId: string
-  payload: { message: string; messageType: string; createdAt: string }
+  payload: {
+    id: string
+    ROOM_ID: string
+    message: string
+    messageType: string
+    created_at: string
+  }
 }
 
 export default class SocketHandler {
