@@ -1,16 +1,11 @@
 import { ApiGatewayManagementApi } from 'aws-sdk'
+import { sendMessageInput } from '../sendMessage'
 
 interface SendToClientInput {
   domainName: string
   stage: string
   ConnectionId: string
-  payload: {
-    id: string
-    ROOM_ID: string
-    message: string
-    messageType: string
-    created_at: string
-  }
+  payload: sendMessageInput
 }
 
 export default class SocketHandler {
