@@ -24,7 +24,7 @@ interface UserSession {
 }
 
 export default class Dynamo {
-  static async getUsersByRoomID(dynamoInfo: DynamoDefaultInfo) {
+  static async getUsersByRoomID(dynamoInfo: DynamoDefaultInfo): Promise<UserSession[]> {
     const { ROOM_ID, TableName } = dynamoInfo
 
     const queried = await dynamoClient
@@ -47,7 +47,7 @@ export default class Dynamo {
     return queried.Items as UserSession[]
   }
 
-  static async getUsersByClientId(connectionInfo: UserConnectionInfo) {
+  static async getUsersByClientId(connectionInfo: UserConnectionInfo): Promise<UserSession[]> {
     const { TableName, connectionId } = connectionInfo
 
     const quried = await dynamoClient
